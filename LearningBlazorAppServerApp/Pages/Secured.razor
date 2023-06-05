@@ -1,0 +1,23 @@
+﻿@page "/securedpage"
+@using LearningBlazorAppServerApp.Data;
+@attribute [Authorize]
+@inject AuthenticationService authenticationService 
+
+<p>This is a secured page.</p>
+<p>Welcome, @Username!</p>
+
+@code{
+    private string Username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationService.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Username = user.Identity.Name;
+        }
+    }
+}

@@ -1,0 +1,48 @@
+﻿@page "/login"
+@inject AuthenticationService authenticationService
+@inject NavigationManager navigationManager
+@using System.ComponentModel.DataAnnotations;
+@using LearningBlazorAppServerApp.Data;
+
+<h1>Login Page</h1>
+<hr />
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="username" class="form-label">Kullanıcı Adı</label>
+        <InputText id="username" class="form-control" @bind-Value="loginModel.Username"></InputText>
+        <ValidationMessage For="@(() => loginModel.Username)" />
+    </div>
+
+    <div class="form-group">
+        <label for="password" class="form-label">Şifre</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password"></InputText>
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Giriş Yap</button>
+
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+
+    private void HandleValidSubmit()
+    {
+        authenticationService.Login(loginModel.Username, loginModel.Password);
+        navigationManager.NavigateTo("/counter");
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Kullanıcı adı gereklidir.")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Şifre gereklidir.")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+    }
+}
